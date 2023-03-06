@@ -1,18 +1,21 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { ImageBackground, StyleSheet, Text, View } from "react-native";
+import colors from "../assets/color";
 
 export default function AboutScreen() {
 	return (
-		<View style={styles.container}>
-			<Text>This is AboutScreen</Text>
-		</View>
+		<ImageBackground
+			style={styles.container}
+			source={require("../assets/aboutus-image.png")}
+			resizeMode="contain"
+		/>
 	);
 }
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#fff",
+		backgroundColor: colors.header,
 		alignItems: "center",
 		justifyContent: "center",
 	},

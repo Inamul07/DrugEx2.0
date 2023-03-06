@@ -1,5 +1,4 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
@@ -8,21 +7,39 @@ import AboutScreen from "./screens/AboutUsScreen";
 import ReportScreen from "./screens/ReportScreen";
 import AppreciationScreen from "./screens/AppreciationScreen";
 import colors from "./assets/color";
+import * as Location from "expo-location";
+import { useEffect, useState } from "react";
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+	const [location, setLocation] = useState(null);
+	const [errorMessage, setErrorMessage] = useState(null);
+
+	useEffect(() => {
+		(async () => {
+			let { status } = await Location.requestForegroundPermissionsAsync();
+			if (status !== "granted") {
+				setErrorMessage("Permission to access location was denied");
+				return;
+			}
+
+			let location = await Location.getCurrentPositionAsync({});
+			setLocation(location);
+		})();
+	}, []);
+
 	const DrawerNavigation = () => {
 		return (
 			<>
-				<StatusBar style="dark" backgroundColor="#A4978E" />
+				<StatusBar style="light" backgroundColor={colors.header} />
 				<Drawer.Navigator
 					useLegacyImplementation={true}
 					initialRouteName="HomeScreen"
 					screenOptions={{
 						headerStyle: {
-							backgroundColor: "#0F0E0E",
+							backgroundColor: colors.header,
 						},
 						headerTintColor: "#fff",
 						headerTitle: "DrugEx",
@@ -40,7 +57,7 @@ export default function App() {
 			<Stack.Navigator
 				screenOptions={{
 					headerStyle: {
-						backgroundColor: colors.secondary,
+						backgroundColor: colors.header,
 					},
 					headerTintColor: "#fff",
 					headerTitle: "DrugEx",
@@ -60,12 +77,3 @@ export default function App() {
 		</NavigationContainer>
 	);
 }
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: "#fff",
-		alignItems: "center",
-		justifyContent: "center",
-	},
-});
