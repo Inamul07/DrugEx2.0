@@ -5,16 +5,19 @@ import {
 	View,
 	ScrollView,
 	TextInput,
-	Alert,
 	Platform,
+	TouchableOpacity,
+	Alert,
 } from "react-native";
 import colors from "../assets/color";
 import CustomButton from "../components/CustomButton";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
-import { TouchableOpacity } from "react-native";
 import { SelectList } from "react-native-dropdown-select-list";
 import { Entypo } from "@expo/vector-icons";
+import { firebase } from "../config";
+import { getDownloadURL, ref, getStorage } from "firebase/storage";
 
 export default function ReportScreen() {
 	const navigation = useNavigation();
@@ -22,6 +25,56 @@ export default function ReportScreen() {
 	// Variables
 	const [incidentDate, setIncidentDate] = useState("Select Date");
 	const [gender, setGender] = useState("");
+	const [image, setImage] = useState(null);
+
+	const [uploading, setUploading] = useState(false);
+
+	const pickImage = async () => {
+		try {
+			const { status } =
+				await ImagePicker.requestCameraPermissionsAsync();
+			if (status !== "granted") {
+				alert(
+					"Sorry, we need camera roll permissions to make this work!"
+				);
+				return;
+			}
+
+			let result = await ImagePicker.launchImageLibraryAsync({
+				mediaTypes: ImagePicker.MediaTypeOptions.Images,
+				allowsEditing: false,
+			});
+
+			if (!result.canceled) {
+				console.log(result.assets);
+				setImage(result.assets[0].uri);
+			}
+		} catch (e) {
+			console.log(e);
+		}
+	};
+
+	const [imageUrl, setImageUrl] = useState(null);
+	const storage = getStorage();
+
+	const uploadImage = async () => {
+		setUploading(true);
+		const response = await fetch(image);
+		const blob = await response.blob();
+		const filename = image.substring(image.lastIndexOf("/") + 1);
+
+		try {
+			await firebase.storage().ref().child(filename).put(blob);
+			setUploading(false);
+			getDownloadURL(ref(storage, filename)).then((url) => {
+				setImageUrl(url);
+			});
+			Alert.alert("Image Uploaded!!!");
+			setImage(null);
+		} catch (e) {
+			console.log(e);
+		}
+	};
 
 	const [show, setShow] = useState(false);
 	const [date, setDate] = useState(new Date());
@@ -41,11 +94,8 @@ export default function ReportScreen() {
 		setIncidentDate(fDate);
 	};
 
-	const pickImage = () => {
-		Alert.alert("Select Image");
-	};
-
 	const submitData = () => {
+		console.log(imageUrl);
 		navigation.replace("AppreciationScreen");
 	};
 
@@ -92,7 +142,12 @@ export default function ReportScreen() {
 									},
 								]}
 							>
-								<Text style={{ fontSize: 18 }}>
+								<Text
+									style={{
+										fontSize: 18,
+										alignSelf: "center",
+									}}
+								>
 									{incidentDate}
 								</Text>
 								<Entypo
@@ -163,7 +218,6 @@ export default function ReportScreen() {
 							<Text style={styles.text}>Gender: </Text>
 							<Text style={styles.symbol}>*</Text>
 						</View>
-						{/* <TextInput style={[styles.input, { width: 150 }]} /> */}
 						<SelectList
 							boxStyles={[styles.input, { width: 150 }]}
 							dropdownStyles={{ backgroundColor: "#D2D2D2" }}
@@ -194,6 +248,15 @@ export default function ReportScreen() {
 						title={"Add Photo/Video"}
 						onPress={pickImage}
 					/>
+					{image != null && (
+						<>
+							<Text style={styles.text}>Selected 1 Image</Text>
+							<CustomButton
+								title={"Upload Image"}
+								onPress={uploadImage}
+							/>
+						</>
+					)}
 				</View>
 			</View>
 			<View style={styles.lineSeperator} />
