@@ -22,12 +22,22 @@ import { getDownloadURL, ref, getStorage } from "firebase/storage";
 export default function ReportScreen() {
 	const navigation = useNavigation();
 
-	// Variables
-	const [incidentDate, setIncidentDate] = useState("Select Date");
-	const [gender, setGender] = useState("");
+	// Fields
+	// Mandatory Fields
+	const [incidentDescription, setIncidentDescription] = useState(null);
+	const [incidentDate, setIncidentDate] = useState(null);
+	const [city, setCity] = useState(null);
+	const [address, setAddress] = useState(null);
+	const [gender, setGender] = useState(null);
+	// Optional Fields
+	const [traffickingType, setTraffickingType] = useState(null);
+	const [transportMethod, setTransportMethod] = useState(null);
+	const [approxAge, setApproxAge] = useState(null);
+	const [otherInfo, setOtherInfo] = useState(null);
 	const [image, setImage] = useState(null);
 
 	const [uploading, setUploading] = useState(false);
+	const [imageCount, setImageCount] = useState(0);
 
 	const pickImage = async () => {
 		try {
@@ -43,11 +53,13 @@ export default function ReportScreen() {
 			let result = await ImagePicker.launchImageLibraryAsync({
 				mediaTypes: ImagePicker.MediaTypeOptions.Images,
 				allowsEditing: false,
+				allowsMultipleSelection: true,
 			});
 
 			if (!result.canceled) {
 				console.log(result.assets);
 				setImage(result.assets[0].uri);
+				setImageCount(result.assets.length);
 			}
 		} catch (e) {
 			console.log(e);
@@ -76,6 +88,11 @@ export default function ReportScreen() {
 		}
 	};
 
+	const cancelSelected = () => {
+		setImageCount(0);
+		setImage(null);
+	};
+
 	const [show, setShow] = useState(false);
 	const [date, setDate] = useState(new Date());
 
@@ -94,9 +111,53 @@ export default function ReportScreen() {
 		setIncidentDate(fDate);
 	};
 
+	const checkData = () => {
+		if (
+			incidentDescription === null ||
+			incidentDate === null ||
+			city === null ||
+			address === null ||
+			gender === null
+		) {
+			Alert.alert("Please Fill All The Mandatory Fields");
+			return false;
+		}
+		return true;
+	};
+
+	const domain = "http://localhost:8000/reports/";
+
+	const uploadData = () => {
+		const body = {
+			incident_description: incidentDescription,
+			incident_date: incidentDate,
+			city: city,
+			address: address,
+			gender: gender,
+			// trafficking_type: traffickingType,
+			// approxAge: approxAge,
+			// otherInfo: otherInfo,
+			// images: [imageUrl],
+		};
+		fetch(domain + "report-crime", {
+			method: "POST",
+			mode: "cors",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(body),
+		});
+	};
+
 	const submitData = () => {
-		console.log(imageUrl);
-		navigation.replace("AppreciationScreen");
+		try {
+			if (checkData()) {
+				uploadData();
+				navigation.replace("AppreciationScreen");
+			}
+		} catch (e) {
+			console.log(e);
+		}
 	};
 
 	return (
@@ -118,6 +179,8 @@ export default function ReportScreen() {
 					<TextInput
 						style={styles.input}
 						placeholder="What did you see or hear"
+						value={incidentDescription}
+						onChangeText={(value) => setIncidentDescription(value)}
 					/>
 				</View>
 				<View
@@ -148,7 +211,9 @@ export default function ReportScreen() {
 										alignSelf: "center",
 									}}
 								>
-									{incidentDate}
+									{incidentDate === null
+										? "Select Date"
+										: incidentDate}
 								</Text>
 								<Entypo
 									name="calendar"
@@ -169,7 +234,11 @@ export default function ReportScreen() {
 					</View>
 					<View style={styles.fields}>
 						<Text style={styles.text}>Trafficking Type: </Text>
-						<TextInput style={[styles.input, { width: 150 }]} />
+						<TextInput
+							style={[styles.input, { width: 150 }]}
+							value={traffickingType}
+							onChangeText={(value) => setTraffickingType(value)}
+						/>
 					</View>
 				</View>
 				<View
@@ -180,14 +249,22 @@ export default function ReportScreen() {
 				>
 					<View style={styles.fields}>
 						<Text style={styles.text}>Transport Method: </Text>
-						<TextInput style={[styles.input, { width: 150 }]} />
+						<TextInput
+							style={[styles.input, { width: 150 }]}
+							value={transportMethod}
+							onChangeText={(value) => setTransportMethod(value)}
+						/>
 					</View>
 					<View style={styles.fields}>
 						<View style={styles.mandatory}>
 							<Text style={styles.text}>City: </Text>
 							<Text style={styles.symbol}>*</Text>
 						</View>
-						<TextInput style={[styles.input, { width: 150 }]} />
+						<TextInput
+							style={[styles.input, { width: 150 }]}
+							value={city}
+							onChangeText={(value) => setCity(value)}
+						/>
 					</View>
 				</View>
 				<View style={styles.fields}>
@@ -195,7 +272,12 @@ export default function ReportScreen() {
 						<Text style={styles.text}>Address: </Text>
 						<Text style={styles.symbol}>*</Text>
 					</View>
-					<TextInput style={styles.input} multiline={true} />
+					<TextInput
+						style={styles.input}
+						multiline={true}
+						value={address}
+						onChangeText={(value) => setAddress(value)}
+					/>
 				</View>
 			</View>
 			<View>
@@ -235,29 +317,46 @@ export default function ReportScreen() {
 						<TextInput
 							style={[styles.input, { width: 150 }]}
 							inputMode="numeric"
+							value={approxAge}
+							onChangeText={(value) => setApproxAge(value)}
 						/>
 					</View>
 				</View>
 				<View style={styles.fields}>
 					<Text style={styles.text}>Other Info: </Text>
-					<TextInput style={styles.input} multiline={true} />
-				</View>
-				<View style={styles.fields}>
-					<Text style={styles.text}>Upload Evidence If Any: </Text>
-					<CustomButton
-						title={"Add Photo/Video"}
-						onPress={pickImage}
+					<TextInput
+						style={styles.input}
+						multiline={true}
+						value={otherInfo}
+						onChangeText={(value) => setOtherInfo(value)}
 					/>
-					{image != null && (
-						<>
-							<Text style={styles.text}>Selected 1 Image</Text>
-							<CustomButton
-								title={"Upload Image"}
-								onPress={uploadImage}
-							/>
-						</>
-					)}
 				</View>
+				{imageCount == 0 && (
+					<View style={styles.fields}>
+						<Text style={styles.text}>
+							Upload Evidence If Any:{" "}
+						</Text>
+						<CustomButton
+							title={"Add Photo/Video"}
+							onPress={pickImage}
+						/>
+					</View>
+				)}
+				{image != null && (
+					<View style={styles.fields}>
+						<Text style={styles.text}>
+							Selected {imageCount} Image(s)
+						</Text>
+						<CustomButton
+							title={"Upload Image"}
+							onPress={uploadImage}
+						/>
+						<CustomButton
+							title={"Cancel"}
+							onPress={cancelSelected}
+						/>
+					</View>
+				)}
 			</View>
 			<View style={styles.lineSeperator} />
 			<Text style={[styles.text, { padding: 10, textAlign: "center" }]}>
