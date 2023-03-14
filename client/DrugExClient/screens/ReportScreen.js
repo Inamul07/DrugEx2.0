@@ -125,7 +125,8 @@ export default function ReportScreen() {
 		return true;
 	};
 
-	const domain = "http://localhost:8000/reports/";
+	// TODO: Change Domain Regularly For Different WIFI.
+	const domain = "http://192.168.0.6:8000/reports/";
 
 	const uploadData = () => {
 		const body = {
@@ -134,11 +135,12 @@ export default function ReportScreen() {
 			city: city,
 			address: address,
 			gender: gender,
-			// trafficking_type: traffickingType,
-			// approxAge: approxAge,
-			// otherInfo: otherInfo,
-			// images: [imageUrl],
+			trafficking_type: traffickingType,
+			approxAge: approxAge,
+			otherInfo: otherInfo,
+			images: [imageUrl],
 		};
+		console.log(JSON.stringify(body));
 		fetch(domain + "report-crime", {
 			method: "POST",
 			mode: "cors",
