@@ -25,8 +25,12 @@ export default function App() {
 				return;
 			}
 
-			let location = await Location.getCurrentPositionAsync({});
-			setLocation(location);
+			try {
+				let location = await Location.getCurrentPositionAsync({});
+				setLocation(location);
+			} catch (err) {
+				console.log(err);
+			}
 		})();
 	}, []);
 

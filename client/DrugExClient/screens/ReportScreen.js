@@ -22,6 +22,12 @@ import { getDownloadURL, ref, getStorage } from "firebase/storage";
 export default function ReportScreen() {
 	const navigation = useNavigation();
 
+	const randomId = function (length = 6) {
+		return Math.random()
+			.toString(36)
+			.substring(2, length + 2);
+	};
+
 	// Fields
 	// Mandatory Fields
 	const [incidentDescription, setIncidentDescription] = useState(null);
@@ -34,7 +40,8 @@ export default function ReportScreen() {
 	const [transportMethod, setTransportMethod] = useState(null);
 	const [approxAge, setApproxAge] = useState(null);
 	const [otherInfo, setOtherInfo] = useState(null);
-	const [image, setImage] = useState(null);
+	const [image, setImage] = useState([]);
+	const [location, setLocation] = useState([]);
 
 	const [uploading, setUploading] = useState(false);
 	const [imageCount, setImageCount] = useState(0);
@@ -57,7 +64,6 @@ export default function ReportScreen() {
 			});
 
 			if (!result.canceled) {
-				console.log(result.assets);
 				setImage(result.assets[0].uri);
 				setImageCount(result.assets.length);
 			}
@@ -80,12 +86,26 @@ export default function ReportScreen() {
 			setUploading(false);
 			getDownloadURL(ref(storage, filename)).then((url) => {
 				setImageUrl(url);
+				fetch(domain + "location/get-location?url=" + url)
+					.then((res) => res.json())
+					.then((data) => setLocation(data.location))
+					.catch((err) => console.log(err));
 			});
-			Alert.alert("Image Uploaded!!!");
+			Alert.alert(
+				"Image Uploaded!!!",
+				"Your images have been received in our servers",
+				[
+					{
+						text: "Ok",
+						style: "cancel",
+					},
+				]
+			);
 			setImage(null);
 		} catch (e) {
 			console.log(e);
 		}
+		setImageCount(0);
 	};
 
 	const cancelSelected = () => {
@@ -119,29 +139,32 @@ export default function ReportScreen() {
 			address === null ||
 			gender === null
 		) {
-			Alert.alert("Please Fill All The Mandatory Fields");
+			Alert.alert("Empty Fields", "Please Fill All The Mandatory Fields");
 			return false;
 		}
 		return true;
 	};
 
 	// TODO: Change Domain Regularly For Different WIFI.
-	const domain = "http://192.168.0.6:8000/reports/";
+	const domain = "http://192.168.29.45:8000/";
 
 	const uploadData = () => {
 		const body = {
+			report_id: randomId(10),
 			incident_description: incidentDescription,
 			incident_date: incidentDate,
 			city: city,
 			address: address,
 			gender: gender,
+			transport_method: transportMethod,
 			trafficking_type: traffickingType,
 			approxAge: approxAge,
 			otherInfo: otherInfo,
 			images: [imageUrl],
+			location: location,
 		};
 		console.log(JSON.stringify(body));
-		fetch(domain + "report-crime", {
+		fetch(domain + "reports/report-crime", {
 			method: "POST",
 			mode: "cors",
 			headers: {
@@ -306,8 +329,8 @@ export default function ReportScreen() {
 							boxStyles={[styles.input, { width: 150 }]}
 							dropdownStyles={{ backgroundColor: "#D2D2D2" }}
 							data={[
-								{ key: "1", value: "Male" },
-								{ key: "2", value: "Female" },
+								{ key: "Male", value: "Male" },
+								{ key: "Female", value: "Female" },
 							]}
 							placeholder="Select Gender"
 							setSelected={(gender) => setGender(gender)}
@@ -344,7 +367,7 @@ export default function ReportScreen() {
 						/>
 					</View>
 				)}
-				{image != null && (
+				{imageCount > 0 && (
 					<View style={styles.fields}>
 						<Text style={styles.text}>
 							Selected {imageCount} Image(s)
