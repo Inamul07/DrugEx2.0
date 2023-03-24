@@ -151,6 +151,7 @@ export default function ReportScreen() {
 	const uploadData = () => {
 		const body = {
 			report_id: randomId(10),
+			report_time: new Date() + "",
 			incident_description: incidentDescription,
 			incident_date: incidentDate,
 			city: city,
@@ -160,7 +161,7 @@ export default function ReportScreen() {
 			trafficking_type: traffickingType,
 			approxAge: approxAge,
 			otherInfo: otherInfo,
-			images: [imageUrl],
+			images: imageUrl != null ? [imageUrl] : null,
 			location: location,
 		};
 		console.log(JSON.stringify(body));

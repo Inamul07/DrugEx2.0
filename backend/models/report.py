@@ -4,6 +4,7 @@ from typing import Optional
 
 class Report(BaseModel):
     report_id: str
+    report_time: str
     incident_description: str
     incident_date: str
     city: str
@@ -21,6 +22,7 @@ class Report(BaseModel):
         schema_extra = {
             "example": {
                 "report_id": "68xclia3s8",
+                "report_time": "1679652083908",
                 "incident_description": "Saw a man near the railway station",
                 "incident_date": "13/03/2023",
                 "city": "Chennai",
