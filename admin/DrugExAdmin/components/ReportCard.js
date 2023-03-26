@@ -1,38 +1,49 @@
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { useEffect } from "react";
 
 const ReportCard = ({ report }) => {
+	const navigation = useNavigation();
+
+	const handlePress = () => {
+		navigation.navigate("Details", {
+			report: report,
+		});
+	};
+
 	return (
-		<View style={styles.cardContainer}>
-			<Text style={styles.text}>
-				<Text style={{ fontWeight: "bold", color: "tomato" }}>
-					Report Id:
-				</Text>{" "}
-				{report.report_id}
-			</Text>
-			<Text style={styles.text}>
-				<Text style={{ fontWeight: "bold", color: "tomato" }}>
-					Address:
-				</Text>{" "}
-				{report.address}
-			</Text>
-			<Text style={styles.text}>
-				<Text style={{ fontWeight: "bold", color: "tomato" }}>
-					City:
-				</Text>{" "}
-				{report.city}
-			</Text>
-			<View
-				style={{
-					borderWidth: 1,
-					borderColor: "#D2D2D2",
-					borderTopColor: "grey",
-				}}
-			>
+		<TouchableOpacity style={styles.cardContainer} onPress={handlePress}>
+			<View>
+				<Text style={styles.text}>
+					<Text style={{ fontWeight: "bold", color: "tomato" }}>
+						Report Id:
+					</Text>{" "}
+					{report.report_id}
+				</Text>
+				<Text style={styles.text}>
+					<Text style={{ fontWeight: "bold", color: "tomato" }}>
+						Address:
+					</Text>{" "}
+					{report.address}
+				</Text>
+				<Text style={styles.text}>
+					<Text style={{ fontWeight: "bold", color: "tomato" }}>
+						City:
+					</Text>{" "}
+					{report.city}
+				</Text>
+				<View
+					style={{
+						borderWidth: 1,
+						borderColor: "#D2D2D2",
+						borderTopColor: "grey",
+					}}
+				/>
 				<Text style={styles.text}>
 					{new Date(report.report_time).toLocaleString()}
 				</Text>
 			</View>
-		</View>
+		</TouchableOpacity>
 	);
 };
 

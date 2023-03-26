@@ -35,6 +35,7 @@ export default function ReportScreen() {
 	const [city, setCity] = useState(null);
 	const [address, setAddress] = useState(null);
 	const [gender, setGender] = useState(null);
+	const [appearance, setAppearance] = useState(null);
 	// Optional Fields
 	const [traffickingType, setTraffickingType] = useState(null);
 	const [transportMethod, setTransportMethod] = useState(null);
@@ -137,7 +138,8 @@ export default function ReportScreen() {
 			incidentDate === null ||
 			city === null ||
 			address === null ||
-			gender === null
+			gender === null ||
+			appearance === null
 		) {
 			Alert.alert("Empty Fields", "Please Fill All The Mandatory Fields");
 			return false;
@@ -157,6 +159,7 @@ export default function ReportScreen() {
 			city: city,
 			address: address,
 			gender: gender,
+			appearance: appearance,
 			transport_method: transportMethod,
 			trafficking_type: traffickingType,
 			approxAge: approxAge,
@@ -347,6 +350,18 @@ export default function ReportScreen() {
 							onChangeText={(value) => setApproxAge(value)}
 						/>
 					</View>
+				</View>
+				<View style={styles.fields}>
+					<View style={styles.mandatory}>
+						<Text style={styles.text}>Appearance: </Text>
+						<Text style={styles.symbol}>*</Text>
+					</View>
+					<TextInput
+						style={styles.input}
+						multiline={true}
+						value={appearance}
+						onChangeText={(value) => setAppearance(value)}
+					/>
 				</View>
 				<View style={styles.fields}>
 					<Text style={styles.text}>Other Info: </Text>

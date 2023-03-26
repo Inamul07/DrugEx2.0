@@ -11,12 +11,13 @@ export default function App() {
 	return (
 		<NavigationContainer>
 			<StatusBar style="light" backgroundColor={colors.header} />
-			<Stack.Navigator>
-				<Stack.Screen
-					name="List"
-					component={ListScreen}
-					options={{ headerShown: false }}
-				/>
+			<Stack.Navigator
+				screenOptions={{
+					headerTintColor: "#FFF",
+					headerStyle: { backgroundColor: colors.header },
+				}}
+			>
+				<Stack.Screen name="List" component={ListScreen} />
 				<Stack.Screen name="Details" component={DetailsScreen} />
 			</Stack.Navigator>
 		</NavigationContainer>

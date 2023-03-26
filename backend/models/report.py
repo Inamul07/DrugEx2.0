@@ -10,6 +10,7 @@ class Report(BaseModel):
     city: str
     address: str
     gender: str
+    appearance: str
 
     trafficking_type: Optional[str] = ""
     transport_method: Optional[str] = ""
@@ -28,6 +29,7 @@ class Report(BaseModel):
                 "city": "Chennai",
                 "address": "Tambaram",
                 "gender": "male",
+                "appearance": "",
                 "trafficking_type": "",
                 "transport_method": "",
                 "approxAge": "",
