@@ -139,7 +139,8 @@ export default function ReportScreen() {
 			city === null ||
 			address === null ||
 			gender === null ||
-			appearance === null
+			appearance === null ||
+			traffickingType === null
 		) {
 			Alert.alert("Empty Fields", "Please Fill All The Mandatory Fields");
 			return false;
@@ -262,11 +263,22 @@ export default function ReportScreen() {
 						)}
 					</View>
 					<View style={styles.fields}>
-						<Text style={styles.text}>Trafficking Type: </Text>
-						<TextInput
-							style={[styles.input, { width: 150 }]}
-							value={traffickingType}
-							onChangeText={(value) => setTraffickingType(value)}
+						<View style={styles.mandatory}>
+							<Text style={styles.text}>Trafficking Type: </Text>
+							<Text style={styles.symbol}>*</Text>
+						</View>
+						<SelectList
+							boxStyles={[styles.input, { width: 150 }]}
+							dropdownStyles={{ backgroundColor: "#D2D2D2" }}
+							data={[
+								{ key: "Drugs", value: "Drugs" },
+								{ key: "Human", value: "Human" },
+								{ key: "Organ", value: "Organ" },
+								{ key: "Goods", value: "Goods" },
+							]}
+							placeholder="Select Type"
+							setSelected={(type) => setTraffickingType(type)}
+							search={false}
 						/>
 					</View>
 				</View>
@@ -335,6 +347,7 @@ export default function ReportScreen() {
 							data={[
 								{ key: "Male", value: "Male" },
 								{ key: "Female", value: "Female" },
+								{ key: "Others", value: "Others" },
 							]}
 							placeholder="Select Gender"
 							setSelected={(gender) => setGender(gender)}

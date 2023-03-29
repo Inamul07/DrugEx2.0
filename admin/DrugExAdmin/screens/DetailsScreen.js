@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { ScrollView } from "react-native";
 import { StyleSheet, View, Text } from "react-native";
+import MapView, { Marker } from "react-native-maps";
 import colors from "../assets/colors";
 import Field from "../components/Field";
 import ShortField from "../components/ShortField";
@@ -46,6 +48,39 @@ const DetailsScreen = ({ route }) => {
 					<Field tag={"Gender"} value={report.gender} />
 				</View>
 			</View>
+			{report.location.length > 0 && (
+				<View style={styles.single}>
+					<View style={{ flexDirection: "column" }}>
+						<Text
+							style={{ color: "#FFF", fontSize: 18, margin: 10 }}
+						>
+							{"Location"}:
+						</Text>
+						<View style={{ alignItems: "center" }}>
+							<MapView
+								style={{
+									width: "95%",
+									height: 200,
+									borderRadius: 5,
+								}}
+								region={{
+									latitude: report.location[0],
+									longitude: report.location[1],
+									latitudeDelta: 0.0922,
+									longitudeDelta: 0.0421,
+								}}
+							>
+								<Marker
+									coordinate={{
+										latitude: report.location[0],
+										longitude: report.location[1],
+									}}
+								/>
+							</MapView>
+						</View>
+					</View>
+				</View>
+			)}
 			<Text style={styles.text}>Extra Information:</Text>
 			<ShortField
 				tag={"Reported Time"}
@@ -69,6 +104,7 @@ const DetailsScreen = ({ route }) => {
 			{report.otherInfo !== null && (
 				<ShortField tag={"Other Info"} value={report.otherInfo} />
 			)}
+			<View style={{ width: "100%", height: 200 }} />
 		</ScrollView>
 	);
 };

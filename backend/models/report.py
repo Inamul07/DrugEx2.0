@@ -11,8 +11,8 @@ class Report(BaseModel):
     address: str
     gender: str
     appearance: str
+    trafficking_type: str
 
-    trafficking_type: Optional[str] = ""
     transport_method: Optional[str] = ""
     approxAge: Optional[str] = ""
     otherInfo: Optional[str] = ""
@@ -30,7 +30,7 @@ class Report(BaseModel):
                 "address": "Tambaram",
                 "gender": "male",
                 "appearance": "",
-                "trafficking_type": "",
+                "trafficking_type": "Drugs",
                 "transport_method": "",
                 "approxAge": "",
                 "otherInfo": "",
