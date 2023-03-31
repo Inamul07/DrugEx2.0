@@ -18,6 +18,7 @@ import { SelectList } from "react-native-dropdown-select-list";
 import { Entypo } from "@expo/vector-icons";
 import { firebase } from "../config";
 import { getDownloadURL, ref, getStorage } from "firebase/storage";
+import { ActivityIndicator } from "react-native";
 
 export default function ReportScreen() {
 	const navigation = useNavigation();
@@ -149,6 +150,7 @@ export default function ReportScreen() {
 	};
 
 	// TODO: Change Domain Regularly For Different WIFI.
+	// const domain = "http://192.168.130.150:8000/";
 	const domain = "http://192.168.29.45:8000/";
 
 	const uploadData = () => {
@@ -401,14 +403,24 @@ export default function ReportScreen() {
 						<Text style={styles.text}>
 							Selected {imageCount} Image(s)
 						</Text>
-						<CustomButton
-							title={"Upload Image"}
-							onPress={uploadImage}
-						/>
-						<CustomButton
-							title={"Cancel"}
-							onPress={cancelSelected}
-						/>
+						{!uploading ? (
+							<>
+								<CustomButton
+									title={"Upload Image"}
+									onPress={uploadImage}
+								/>
+								<CustomButton
+									title={"Cancel"}
+									onPress={cancelSelected}
+								/>
+							</>
+						) : (
+							<ActivityIndicator
+								animating={uploading}
+								size={"large"}
+								color={"#FFF"}
+							/>
+						)}
 					</View>
 				)}
 			</View>

@@ -1,6 +1,6 @@
+import { ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useState } from "react";
-import { ScrollView } from "react-native";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, Image } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import colors from "../assets/colors";
 import Field from "../components/Field";
@@ -8,6 +8,8 @@ import ShortField from "../components/ShortField";
 
 const DetailsScreen = ({ route }) => {
 	const { report } = route.params;
+
+	const [loading, setLoading] = useState(false);
 
 	return (
 		<ScrollView
@@ -48,13 +50,58 @@ const DetailsScreen = ({ route }) => {
 					<Field tag={"Gender"} value={report.gender} />
 				</View>
 			</View>
+			{report.images !== null && (
+				<View style={styles.single}>
+					<View style={{ flexDirection: "column" }}>
+						<Text
+							style={{ color: "#FFF", fontSize: 18, margin: 10 }}
+						>
+							Images
+						</Text>
+						<ScrollView
+							style={{ flexDirection: "row" }}
+							horizontal={true}
+						>
+							{report.images.map((value, index) => {
+								return (
+									<View key={index}>
+										<TouchableOpacity>
+											<Image
+												style={{
+													width: 150,
+													height: 150,
+													margin: 10,
+												}}
+												source={{
+													uri: report.images[index],
+												}}
+												onLoadStart={() =>
+													setLoading(true)
+												}
+												onLoadEnd={() =>
+													setLoading(false)
+												}
+											/>
+										</TouchableOpacity>
+										<ActivityIndicator
+											animating={loading}
+											size={"large"}
+											color="#FFF"
+										/>
+									</View>
+								);
+							})}
+						</ScrollView>
+					</View>
+				</View>
+			)}
 			{report.location.length > 0 && (
 				<View style={styles.single}>
 					<View style={{ flexDirection: "column" }}>
 						<Text
 							style={{ color: "#FFF", fontSize: 18, margin: 10 }}
 						>
-							{"Location"}:
+							Location
 						</Text>
 						<View style={{ alignItems: "center" }}>
 							<MapView
