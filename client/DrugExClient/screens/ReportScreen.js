@@ -154,8 +154,9 @@ export default function ReportScreen() {
 	const domain = "http://192.168.29.45:8000/";
 
 	const uploadData = () => {
+		const reportId = randomId(10);
 		const body = {
-			report_id: randomId(10),
+			report_id: reportId,
 			report_time: new Date() + "",
 			incident_description: incidentDescription,
 			incident_date: incidentDate,

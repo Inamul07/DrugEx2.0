@@ -8,7 +8,10 @@ router = APIRouter(prefix="/reports", tags=["Reports"])
 @router.post("/report-crime")
 async def report_crime(data: Report):
     result = await db.create(data)
-    return {"Inserted": result}
+    faceValues = False
+    if data.images != None:
+        faceValues = await db.processImage(data.report_id, data.images[0])
+    return {"Inserted": result, "Faces": faceValues}
 
 
 @router.get("/get-all-reports")
