@@ -150,8 +150,8 @@ export default function ReportScreen() {
 	};
 
 	// TODO: Change Domain Regularly For Different WIFI.
-	// const domain = "http://192.168.130.150:8000/";
 	const domain = "http://192.168.29.45:8000/";
+	// const domain = "http://192.168.29.45:8000/";
 
 	const uploadData = () => {
 		const reportId = randomId(10);

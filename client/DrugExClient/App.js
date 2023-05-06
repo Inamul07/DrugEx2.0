@@ -9,6 +9,7 @@ import AppreciationScreen from "./screens/AppreciationScreen";
 import colors from "./assets/color";
 import * as Location from "expo-location";
 import { useEffect, useState } from "react";
+import ChatScreen from "./screens/ChatScreen";
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -51,6 +52,7 @@ export default function App() {
 				>
 					<Drawer.Screen name="Home" component={HomeScreen} />
 					<Drawer.Screen name="AboutScreen" component={AboutScreen} />
+					<Drawer.Screen name="ChatScreen" component={ChatScreen} />
 				</Drawer.Navigator>
 			</>
 		);

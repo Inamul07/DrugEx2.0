@@ -95,11 +95,15 @@ const DetailsScreen = ({ route }) => {
 					</View>
 				</View>
 			)}
-			{report.location !== null && (
+			{report.location !== null && report.location.length > 0 && (
 				<View style={styles.single}>
 					<View style={{ flexDirection: "column" }}>
 						<Text
-							style={{ color: "#FFF", fontSize: 18, margin: 10 }}
+							style={{
+								color: "#FFF",
+								fontSize: 18,
+								margin: 10,
+							}}
 						>
 							Location
 						</Text>

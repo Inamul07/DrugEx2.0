@@ -4,12 +4,14 @@ import requests
 from PIL import Image
 from io import BytesIO
 import numpy
+from models.chat import Chat
 
 client = motor_asyncio.AsyncIOMotorClient(
     "mongodb://rootuser:rootpass@localhost:27017/")
 db = client.DrugEx
 reportCollection = db.reports
 faceCollection = db.faces
+chatCollection = db.chats
 
 
 async def create(data):
@@ -45,15 +47,16 @@ async def processImage(reportId, url):
     img = Image.open(BytesIO(response.content))
     image = face_recognition.load_image_file("image.jpeg")
     face_locations = face_recognition.face_locations(image)
-    print(face_locations)
+    print(len(face_locations))
     for face_location in face_locations:
         face_encoding = face_recognition.face_encodings(
             image, [face_location])[0]
-        print(face_encoding)
         match = False
         for face in faces:
+            print(face)
             if(face_recognition.compare_faces([numpy.array(face["face_id"])], face_encoding))[0]:
-                await faceCollection.update_one({"face_id": face_encoding.tolist()}, {"$push": {"report_ids": reportId}})
+                print("Match Found")
+                await faceCollection.update_one({"face_id": face["face_id"]}, {"$push": {"report_ids": reportId}})
                 match = True
                 break
         if not match:
@@ -61,3 +64,31 @@ async def processImage(reportId, url):
                 reportId]}
             await faceCollection.insert_one(dict(face_data))
     return True
+
+
+async def addChat(chat):
+    chat = dict(chat)
+    chat['user'] = dict(chat['user'])
+    userId = chat['user']['name']
+    response = chatCollection.find({"user_id": userId})
+    count = 0
+    messages = []
+    for document in await response.to_list(length=100):
+        count += 1
+    if count == 0:
+        chatCollection.insert_one({"user_id": userId, "messages": []})
+    response = chatCollection.find({"user_id": userId})
+    for document in await response.to_list(length=100):
+        messages = document['messages']
+    messages.append(chat)
+    chatCollection.update_one({"user_id": userId}, {
+                              "$set": {"messages": messages}})
+    return True
+
+
+async def getChats(userId: str):
+    messages = []
+    response = chatCollection.find({"user_id": userId})
+    for document in await response.to_list(length=100):
+        messages = document['messages']
+    return messages
