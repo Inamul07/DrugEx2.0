@@ -22,7 +22,7 @@ async def get_all_reports():
 
 @router.get("/get-report")
 async def get_report(reportId: str):
-    await db.get_report(reportId)
+    return await db.get_report(reportId)
 
 
 @router.get("/get-related-reports")

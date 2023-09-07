@@ -5,9 +5,9 @@ from PIL import Image
 from io import BytesIO
 import numpy
 from models.chat import Chat
+from keys import keys
 
-client = motor_asyncio.AsyncIOMotorClient(
-    "mongodb+srv://inamul07:passformongodb@drugex.zqgbnyf.mongodb.net/?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE")
+client = motor_asyncio.AsyncIOMotorClient(keys.getMongoURI())
 db = client.DrugEx
 reportCollection = db.reports
 faceCollection = db.faces
