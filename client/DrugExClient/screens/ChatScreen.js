@@ -44,7 +44,6 @@ const ChatScreen = () => {
 		);
 	}, []);
 
-	// const domain = "http://192.168.137.210:8000/";
 	const domain = "http://192.168.29.45:8000/";
 
 	const postChat = (message) => {

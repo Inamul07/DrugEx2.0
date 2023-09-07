@@ -18,3 +18,18 @@ async def report_crime(data: Report):
 async def get_all_reports():
     data = await db.get_all()
     return data
+
+
+@router.get("/get-report")
+async def get_report(reportId: str):
+    await db.get_report(reportId)
+
+
+@router.get("/get-related-reports")
+async def get_related_reports(reportId: str):
+    relatedIds = await db.get_related_report_ids(reportId)
+    reports = []
+    for reportId in relatedIds:
+        report = await db.get_report(reportId)
+        reports.append(report)
+    return reports

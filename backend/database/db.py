@@ -7,7 +7,7 @@ import numpy
 from models.chat import Chat
 
 client = motor_asyncio.AsyncIOMotorClient(
-    "mongodb://rootuser:rootpass@localhost:27017/")
+    "mongodb+srv://inamul07:passformongodb@drugex.zqgbnyf.mongodb.net/?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE")
 db = client.DrugEx
 reportCollection = db.reports
 faceCollection = db.faces
@@ -92,3 +92,19 @@ async def getChats(userId: str):
     for document in await response.to_list(length=100):
         messages = document['messages']
     return messages
+
+
+async def get_report(reportId: str):
+    reports = []
+    response = reportCollection.find({"report_id": reportId}, {"_id": 0})
+    for document in await response.to_list(length=100):
+        reports.append(document)
+    return reports[0]
+
+
+async def get_related_report_ids(reportId: str):
+    faces = await get_all_faces()
+    for face in faces:
+        if reportId in face["report_ids"]:
+            return face["report_ids"]
+    return []

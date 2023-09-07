@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from routes.report import router as Reportrouter
 from routes.location import router as LocationRouter
 from routes.chat import router as ChatRouter
+from routes.face import router as FaceRouter
 
 app = FastAPI()
 
@@ -23,3 +24,4 @@ def root():
 app.include_router(router=Reportrouter)
 app.include_router(router=LocationRouter)
 app.include_router(router=ChatRouter)
+app.include_router(router=FaceRouter)

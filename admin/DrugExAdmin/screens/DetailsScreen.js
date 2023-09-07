@@ -5,6 +5,7 @@ import MapView, { Marker } from "react-native-maps";
 import colors from "../assets/colors";
 import Field from "../components/Field";
 import ShortField from "../components/ShortField";
+import RelatedReports from "../components/RelatedReports";
 
 const DetailsScreen = ({ route }) => {
 	const { report } = route.params;
@@ -105,7 +106,7 @@ const DetailsScreen = ({ route }) => {
 								margin: 10,
 							}}
 						>
-							Location
+							Location:
 						</Text>
 						<View style={{ alignItems: "center" }}>
 							<MapView
@@ -155,6 +156,10 @@ const DetailsScreen = ({ route }) => {
 			{report.otherInfo !== null && (
 				<ShortField tag={"Other Info"} value={report.otherInfo} />
 			)}
+			<Text style={styles.text}>Related Reports: </Text>
+			<View style={{ width: "100%" }}>
+				<RelatedReports reportId={report.report_id} />
+			</View>
 			<View style={{ width: "100%", height: 200 }} />
 		</ScrollView>
 	);

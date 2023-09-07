@@ -10,8 +10,6 @@ import { useEffect, useState } from "react";
 import ReportCard from "../components/ReportCard";
 
 const ListScreen = ({ navigation }) => {
-	// TODO: Change Domain Regularly For Different WIFI.
-	// const domain = "http://192.168.137.210:8000/";
 	const domain = "http://192.168.29.45:8000/";
 	const [reports, setReports] = useState([]);
 	const [refreshing, setRefreshing] = useState(false);
